@@ -5,6 +5,7 @@ import json
 from moto import mock_aws
 from typer.testing import CliRunner
 
+from ec2kit import __version__
 from ec2kit.cli import app
 
 runner = CliRunner()
@@ -27,11 +28,11 @@ def test_cli_version() -> None:
     """Verify `ec2kit --version` and `-V` print version string."""
     result = runner.invoke(app, ["--version"])
     assert result.exit_code == 0
-    assert "ec2kit version 0.1.0" in result.stdout
+    assert f"ec2kit version {__version__}" in result.stdout
 
     result_short = runner.invoke(app, ["-V"])
     assert result_short.exit_code == 0
-    assert "ec2kit version 0.1.0" in result_short.stdout
+    assert f"ec2kit version {__version__}" in result_short.stdout
 
 
 @mock_aws
