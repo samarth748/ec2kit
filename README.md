@@ -1,10 +1,11 @@
 # ec2kit
 
-[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![PyPI Version](https://img.shields.io/pypi/v/ec2kit.svg)](https://pypi.org/project/ec2kit/)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/ec2kit.svg)](https://pypi.org/project/ec2kit/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Code Style: Ruff](https://img.shields.io/badge/code%20style-ruff-000000.svg)](https://github.com/astral-sh/ruff)
-[![Tests: 92 Passed](https://img.shields.io/badge/tests-92%20passed-brightgreen.svg)]()
-[![Coverage: 81%+](https://img.shields.io/badge/coverage-81%25-success.svg)]()
+[![Tests: 92 Passed](https://img.shields.io/badge/tests-92%20passed-brightgreen.svg)](https://github.com/samarth748/ec2kit/actions)
+[![Coverage: 81%+](https://img.shields.io/badge/coverage-81%25-success.svg)](https://github.com/samarth748/ec2kit)
 
 **ec2kit** is a production-grade, developer-first command-line interface for discovering, analyzing, auditing, securing, and managing AWS EC2 infrastructure without relying on the AWS Management Console.
 
@@ -14,6 +15,7 @@ Built with Python 3.11+, Typer, Rich, and Boto3, `ec2kit` provides deep infrastr
 
 ## Key Capabilities
 
+- **Instant Package Installation**: Installable worldwide via `pip install ec2kit` or `pipx install ec2kit`.
 - **Lightning-Fast Discovery (`ec2kit ls`)**: Multi-region, concurrent EC2 discovery with rich state color-coding, network details, and instant filtering.
 - **Cost Intelligence (`ec2kit cost`)**: On-demand monthly run-rate estimation, multi-dimensional idle instance detection (CPU + Network), right-sizing recommendations, and orphaned resource identification (unattached EBS volumes, idle Elastic IPs).
 - **VPC & Network Mapping (`ec2kit scan`)**: Discovers full network topologies (VPCs, Subnets, Route Tables, IGWs, NATs, Security Groups) and automatically renders Mermaid architecture flowcharts.
@@ -64,13 +66,27 @@ flowchart TD
 
 ---
 
-## Quickstart
+## Installation
 
-### Installation
+### Option 1: Standard Installation (PyPI)
+
+```bash
+pip install ec2kit
+```
+
+### Option 2: Isolated Global CLI (Recommended for DevOps Engineers)
+
+Using `pipx` installs `ec2kit` in an isolated environment and makes it globally available in every terminal tab:
+
+```bash
+pipx install ec2kit
+```
+
+### Option 3: From GitHub Source
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-org/ec2kit.git
+git clone https://github.com/samarth748/ec2kit.git
 cd ec2kit
 
 # Create a virtual environment and install dependencies
@@ -79,37 +95,39 @@ source .venv/bin/activate
 pip install -e ".[dev]"
 ```
 
-### Basic Commands
+---
+
+## Quickstart & Common Commands
 
 ```bash
-# Verify installation and AWS identity
+# 1. Verify authenticated session identity and AWS environment
 ec2kit info
 
-# Discover instances across all AWS regions
+# 2. Discover instances across all enabled AWS regions
 ec2kit ls --all-regions
 
-# Filter running t3 instances
-ec2kit ls --state running --type t3.micro
+# 3. Filter running t3 instances in a specific region
+ec2kit ls --region us-east-1 --state running --type t3.micro
 
-# Cost & idle resource analysis over the past 14 days
+# 4. Analyze costs, right-sizing savings, and idle resources over past 14 days
 ec2kit cost --days 14
 
-# Generate and export VPC architecture diagram
+# 5. Discover VPC topology and export interactive Mermaid architecture diagram
 ec2kit scan --output architecture.mmd
 
-# Audit infrastructure security posture
+# 6. Audit security posture against CIS AWS benchmarks
 ec2kit security --severity HIGH
 
-# Export live VPC topology to Terraform HCL
+# 7. Export live VPC infrastructure to reviewable Terraform 1.5+ HCL
 ec2kit export terraform --output-dir ./terraform
 
-# Detect drift between live AWS and your Terraform state
+# 8. Detect infrastructure drift against your local Terraform state
 ec2kit drift --state terraform.tfstate
 
-# Validate infrastructure against organizational governance policy
+# 9. Evaluate compliance against custom governance policies
 ec2kit policy check --policy policy.yaml
 
-# Safely stop an instance with blast-radius preview and dry-run
+# 10. Safely test stopping an instance via AWS Dry-Run (zero mutation)
 ec2kit stop i-0123456789abcdef0 --dry-run
 ```
 
@@ -149,8 +167,22 @@ fi
 # Pipeline drift detection gate
 ec2kit --json drift --state terraform.tfstate | jq '.total_drifts'
 
-# Policy compliance gate
+# Policy compliance gate (exits with code 1 if violations exist)
 ec2kit policy check --policy .github/governance-policy.yaml
+```
+
+---
+
+## Containerized Deployment (Docker)
+
+A multi-stage [`Dockerfile`](Dockerfile) is included to run `ec2kit` in containerized environments:
+
+```bash
+# Build the Docker image
+docker build -t samarth748/ec2kit:latest .
+
+# Run ec2kit mounting your AWS credentials
+docker run --rm -v ~/.aws:/root/.aws:ro samarth748/ec2kit:latest info
 ```
 
 ---
