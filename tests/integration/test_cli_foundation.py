@@ -1,6 +1,7 @@
 """Integration tests for ec2kit CLI foundation commands."""
 
 import json
+import re
 
 from moto import mock_aws
 from typer.testing import CliRunner
@@ -8,20 +9,26 @@ from typer.testing import CliRunner
 from ec2kit import __version__
 from ec2kit.cli import app
 
-runner = CliRunner()
+runner = CliRunner(env={"COLUMNS": "160", "NO_COLOR": "1", "TERM": "dumb"})
+
+
+def strip_ansi(text: str) -> str:
+    """Remove ANSI escape sequences from terminal output."""
+    return re.sub(r"\x1b\[[0-9;]*[a-zA-Z]", "", text)
 
 
 def test_cli_help() -> None:
     """Verify `ec2kit --help` displays expected overview and options."""
     result = runner.invoke(app, ["--help"])
     assert result.exit_code == 0
-    assert "Developer CLI for discovering, managing" in result.stdout
-    assert "--profile" in result.stdout
-    assert "--region" in result.stdout
-    assert "--json" in result.stdout
-    assert "--quiet" in result.stdout
-    assert "--verbose" in result.stdout
-    assert "info" in result.stdout
+    clean = strip_ansi(result.stdout)
+    assert "Developer CLI for discovering, managing" in clean
+    assert "--profile" in clean
+    assert "--region" in clean
+    assert "--json" in clean
+    assert "--quiet" in clean
+    assert "--verbose" in clean
+    assert "info" in clean
 
 
 def test_cli_version() -> None:
