@@ -101,7 +101,28 @@ pip install -e ".[dev]"
 
 `ec2kit` uses standard Boto3 credential resolution. It never prompts for secret keys in plaintext, never saves secrets to local databases, and automatically integrates with existing AWS setups.
 
-Before running commands, configure your AWS credentials using any of the methods below:
+### Where to Get Your AWS Access Key ID & Secret Access Key
+
+If you do not already have access keys:
+
+1. **Sign in** to the [AWS Management Console](https://aws.amazon.com/console/).
+2. In the top search bar, search for **IAM** and select **IAM (Identity and Access Management)**.
+3. In the left navigation menu, click **Users**.
+4. Click on your IAM username (or click **Create user** if you don't have one and attach policies such as `AmazonEC2ReadOnlyAccess`).
+5. Click on the **Security credentials** tab.
+6. Scroll down to **Access keys** and click **Create access key**.
+7. Under *Use case*, select **Command Line Interface (CLI)**, check the acknowledgment box, and click **Next**.
+8. *(Optional)* Add a description tag and click **Create access key**.
+9. **Copy both keys immediately** or click **Download .csv file**:
+   - **Access Key ID**: string starting with `AKIA...` (e.g., `AKIAIOSFODNN7EXAMPLE`)
+   - **Secret Access Key**: string (e.g., `wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY`)
+   *(Note: This is the only time AWS reveals your Secret Key. Keep it secure and never share or commit it).*
+
+---
+
+### How to Configure Your Credentials for `ec2kit`
+
+Configure your keys using any of the methods below:
 
 ### Method 1: AWS CLI `aws configure` (Recommended for Local Dev)
 
