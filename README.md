@@ -97,6 +97,86 @@ pip install -e ".[dev]"
 
 ---
 
+## AWS Authentication & Credentials Setup
+
+`ec2kit` uses standard Boto3 credential resolution. It never prompts for secret keys in plaintext, never saves secrets to local databases, and automatically integrates with existing AWS setups.
+
+Before running commands, configure your AWS credentials using any of the methods below:
+
+### Method 1: AWS CLI `aws configure` (Recommended for Local Dev)
+
+If you have the [AWS CLI](https://aws.amazon.com/cli/) installed, run:
+
+```bash
+aws configure
+```
+Enter your details when prompted:
+- **AWS Access Key ID**: `AKIAIOSFODNN7EXAMPLE`
+- **AWS Secret Access Key**: `wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY`
+- **Default region name**: `us-east-1` (or your preferred region, e.g., `ap-south-1`, `eu-west-1`)
+- **Default output format**: `json`
+
+This creates/updates `~/.aws/credentials` and `~/.aws/config`.
+
+### Method 2: Manual Credentials File (`~/.aws/credentials`)
+
+Create or edit `~/.aws/credentials`:
+
+```ini
+[default]
+aws_access_key_id = YOUR_ACCESS_KEY_ID
+aws_secret_access_key = YOUR_SECRET_ACCESS_KEY
+
+# Optional: Add multiple named profiles
+[production]
+aws_access_key_id = YOUR_PROD_ACCESS_KEY
+aws_secret_access_key = YOUR_PROD_SECRET_KEY
+```
+
+And set your default region in `~/.aws/config`:
+
+```ini
+[default]
+region = us-east-1
+
+[profile production]
+region = ap-south-1
+```
+
+### Method 3: Environment Variables (Ideal for CI/CD & Temporary Sessions)
+
+Export temporary or environment credentials directly in your terminal:
+
+```bash
+export AWS_ACCESS_KEY_ID="YOUR_ACCESS_KEY_ID"
+export AWS_SECRET_ACCESS_KEY="YOUR_SECRET_ACCESS_KEY"
+export AWS_DEFAULT_REGION="us-east-1"
+
+# If using temporary credentials (e.g., from STS or AWS Academy / Learner Lab):
+export AWS_SESSION_TOKEN="YOUR_SESSION_TOKEN"
+```
+
+### Method 4: AWS SSO / IAM Identity Center
+
+```bash
+# Authenticate with your SSO profile
+aws sso login --profile my-sso-profile
+
+# Run ec2kit specifying your profile
+ec2kit --profile my-sso-profile info
+```
+
+### Verify Authentication
+
+Test that `ec2kit` can communicate with your AWS account:
+
+```bash
+ec2kit info
+```
+This displays your authenticated AWS Account ID, Caller ARN, active region, and available AWS regions.
+
+---
+
 ## Quickstart & Common Commands
 
 ```bash
